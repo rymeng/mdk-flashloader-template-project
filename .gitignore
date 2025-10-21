@@ -1,0 +1,10 @@
+.vscode/
+
+Build/*
+!Build/.gitkeep
+
+MDK-ARM/DebugConfig
+MDK-ARM/RTE
+MDK-ARM/*.scvd
+MDK-ARM/*.uvguix.*
+MDK-ARM/*.uvoptx
