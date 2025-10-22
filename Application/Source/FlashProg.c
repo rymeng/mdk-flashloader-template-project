@@ -6,9 +6,7 @@
 int Init(unsigned long adr, unsigned long clk, unsigned long fnc)
 {
   // Unlock Flash Register
-  *(volatile uint32_t *)0x400B1004UL = 0x45670123UL;                                // Flash->KEYR1
-  __builtin_arm_dsb(0xFUL);
-  *(volatile uint32_t *)0x400B1004UL = 0xCDEF89ABUL;                                // Flash->KEYR1
+  *(volatile uint32_t *)0x400B1004UL = 0xAABBCCDDUL;                                // Flash->KEYR1
   __builtin_arm_dsb(0xFUL);
 
   (void)adr;
@@ -31,7 +29,7 @@ int UnInit(unsigned long fnc)
 
 int EraseChip(void)
 {
-  // Clear "Erase Done" Flag
+  // Clear "Erasing Or Programming Done" Flag
   *(volatile uint32_t *)0x400B100CUL |= (0x1UL << 5UL);                             // Flash->SR1 : Bit 5 (EOP)
   __builtin_arm_dsb(0xFUL);
 
@@ -47,13 +45,13 @@ int EraseChip(void)
     ;
   }
 
-  // Disable Erase Bank 1
+  // Disable Erasing Bank 1
   *(volatile uint32_t *)0x400B1010UL &= ~(0x1UL << 2UL);                            // FLASH->CR1 : Bit 2 (MER)
   __builtin_arm_dsb(0xFUL);
 
-  // Check "Erase/Write Done" Flag
+  // Check "Erasing Or Programming Done" Flag
   if (((*(volatile uint32_t *)0x400B100CUL) & (0x1UL << 5UL)) == (0x1UL << 5UL)) {  // Flash->SR1 : Bit 5 (EOP)
-    // Clear "Erase/Write Done" Flag
+    // Clear "Erasing Or Programming Done" Flag
     *(volatile uint32_t *)0x400B100CUL |= (0x1UL << 5UL);                           // Flash->SR1 : Bit 5 (EOP)
     return 0;
   } else {
@@ -63,7 +61,7 @@ int EraseChip(void)
 
 int EraseSector(unsigned long adr)
 {
-  // Clear "Erase Done" Flag
+  // Clear "Erasing Or Programming Done" Flag
   *(volatile uint32_t *)0x400B100CUL |= (0x1UL << 5UL);                             // Flash->SR1 : Bit 5 (EOP)
   __builtin_arm_dsb(0xFUL);
 
@@ -71,7 +69,7 @@ int EraseSector(unsigned long adr)
   *(volatile uint32_t *)0x400B1014UL = adr;                                         // Flash->AR1
   __builtin_arm_dsb(0xFUL);
 
-  // Enable Erase Sector of BANK 1
+  // Enable Erasing Sector of BANK 1
   *(volatile uint32_t *)0x400B1010UL |= (0x1UL << 1UL);                             // FLASH->CR1 : Bit 1 (PER)
   __builtin_arm_dsb(0xFUL);
 
@@ -83,13 +81,13 @@ int EraseSector(unsigned long adr)
     ;
   }
 
-  // Disable Erase Sector of BANK 1
+  // Disable Erasing Sector of BANK 1
   *(volatile uint32_t *)0x400B1010UL &= ~(0x1UL << 1UL);                            // FLASH->CR1 : Bit 1 (PER)
   __builtin_arm_dsb(0xFUL);
 
-  // Check "Erase/Write Done" Flag
+  // Check "Erasing Or Programming Done" Flag
   if (((*(volatile uint32_t *)0x400B100CUL) & (0x1UL << 5UL)) == (0x1UL << 5UL)) {  // Flash->SR1 : Bit 5 (EOP)
-    // Clear "Erase/Write Done" Flag
+    // Clear "Erasing Or Programming Done" Flag
     *(volatile uint32_t *)0x400B100CUL |= (0x1UL << 5UL);                           // Flash->SR1 : Bit 5 (EOP)
     return 0;
   } else {
@@ -126,9 +124,9 @@ int ProgramPage (unsigned long adr, unsigned long sz, unsigned char *buf)
   *(volatile uint32_t *)0x400B1010UL &= ~(0x1UL << 0U);                             // FLASH->CR1 : Bit 0 (PG)
   __builtin_arm_dsb(0xFUL);
 
-  // Check "Erase/Write Done" Flag
+  // Check "Erasing Or Programming Done" Flag
   if (((*(volatile uint32_t *)0x400B100CUL) & (0x1UL << 5UL)) == (0x1UL << 5UL)) {  // Flash->SR1 : Bit 5 (EOP)
-    // Clear "Erase/Write Done" Flag
+    // Clear "Erasing Or Programming Done" Flag
     *(volatile uint32_t *)0x400B100CUL |= (0x1UL << 5UL);                           // Flash->SR1 : Bit 5 (EOP)
     return 0;
   } else {
