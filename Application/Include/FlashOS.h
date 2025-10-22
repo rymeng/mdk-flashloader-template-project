@@ -1,7 +1,7 @@
 #ifndef __FLASHOS_H__
 #define __FLASHOS_H__
 
-#define VERS            (0)
+#define VERS            (1)
 #define FLASH_DRV_VERS  (0x0100 + VERS)
 
 #define UNKNOWN         (0)
